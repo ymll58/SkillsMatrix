@@ -1,0 +1,1042 @@
+<!--©Author: Youssef Mellouli
+E-mail:mellouliyoussef@live.fr
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Matrix Dashboard</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-300);
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            width: 300px;
+            font-size: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background-color: var(--light);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn_hover:hover {
+            background-color: var(--gray-100);
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            background-color: var(--light);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn:hover {
+            background-color: var(--gray-100);
+        }
+
+        .view-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .category-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .skills-list {
+            padding: 1rem;
+        }
+
+        .skill-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .skill-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-name {
+            font-weight: bold;
+        }
+
+        .skill-years {
+            background-color: var(--gray-200);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .progress-container {
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .progress-beginner {
+            width: 25%;
+            background-color: var(--danger);
+        }
+
+        .progress-good {
+            width: 50%;
+            background-color: var(--warning);
+        }
+
+        .progress-advanced {
+            width: 75%;
+            background-color: var(--success);
+        }
+
+        .progress-expert {
+            width: 100%;
+            background-color: var(--primary);
+        }
+
+        .chart-container {
+            display: none;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container.active {
+            display: block;
+        }
+
+        .skill-list-view {
+            display: block;
+        }
+
+        .skill-list-view.hidden {
+            display: none;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .legend-beginner {
+            background-color: var(--danger);
+        }
+
+        .legend-good {
+            background-color: var(--warning);
+        }
+
+        .legend-advanced {
+            background-color: var(--success);
+        }
+
+        .legend-expert {
+            background-color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-group {
+                flex-wrap: wrap;
+            }
+
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Skills Matrix Dashboard</h1>
+            <p class="subtitle">Interaktive Visualisierung von technischen Fähigkeiten und Erfahrungen</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" class="search-box" placeholder="Suche nach Skills...">
+
+            <div class="filter-group">
+                <button class="filter-btn filter-btn_hover active" data-filter="all">Alle</button>
+                <button class="filter-btn filter-btn_hover" data-filter="languages">Sprachen & Frameworks</button>
+                <button class="filter-btn filter-btn_hover" data-filter="databases">Datenbanken</button>
+                <button class="filter-btn filter-btn_hover" data-filter="web">Web-/App-Entwicklung</button>
+                <button class="filter-btn filter-btn_hover" data-filter="tools">Sonstiges.</button>
+            </div>
+
+            <div class="view-toggle">
+                <button id="list-btn" class="view-btn active" data-view="list">Liste</button>
+                <button id="chart-btn" class="view-btn" data-view="chart">Diagramm</button>
+            </div>
+        </div>
+
+        <div class="chart-container" id="chart">
+            <canvas id="skillsChart" width="400" height="300"></canvas>
+        </div>
+
+        <div class="skill-list-view">
+            <div class="skills-container">
+                <!-- Languages and Frameworks -->
+                <div class="category" data-category="languages">
+                    <div class="category-header">Sprachen & Frameworks</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Java</span>
+                                <span class="skill-years">3 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-advanced"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">C</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-advanced"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Python</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">JavaScript</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Angular</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">TypeScript</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Spring Frameworks</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Hibernate-JPA</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">JDBC</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Shell Scripting</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">XML</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">R</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Databases -->
+                <div class="category" data-category="databases">
+                    <div class="category-header">Datenbanken</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">SQL</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">MySQL</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Postgres</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Firestore</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Architectures and Patterns -->
+                <div class="category" data-category="tools">
+                    <div class="category-header">Architekturen und Patterns</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">MVC</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Rest</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">DAO</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web / App Development -->
+                <div class="category" data-category="web">
+                    <div class="category-header">Web-/App-Entwicklung</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">vue.js</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Ionic</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">npm</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-advanced"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Android</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">HTML</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-advanced"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">CSS</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-advanced"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Swift</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Json</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platforms -->
+                <div class="category" data-category="tools">
+                    <div class="category-header">Plattformen</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Ubuntu Linux</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Docker</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Visual Studio Code</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Intellij</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Eclipse</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Scrum</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Tomcat</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QA -->
+                <div class="category" data-category="tools">
+                    <div class="category-header">QA</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Postman</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">JUnit</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Mockito</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools / Methods -->
+                <div class="category" data-category="tools">
+                    <div class="category-header">Tools / Methoden</div>
+                    <div class="skills-list">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Git</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Bash</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Visual Studio Code</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Intellij</span>
+                                <span class="skill-years">2 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Eclipse</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Scrum</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Figma</span>
+                                <span class="skill-years">0.5 Jahre</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-beginner"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Maven</span>
+                                <span class="skill-years">1 Jahr</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-good"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color legend-beginner"></div>
+                <span>Grundkenntnisse</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-good"></div>
+                <span>Gut</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-advanced"></div>
+                <span>Fortgeschritten</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-expert"></div>
+                <span>Experte</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+
+        // DOM Elements
+        const searchBox = document.querySelector('.search-box');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const categories = document.querySelectorAll('.category');
+        const skillItems = document.querySelectorAll('.skill-item');
+        const chartContainer = document.getElementById('chart');
+        const skillListView = document.querySelector('.skill-list-view');
+        const controlsDiv = document.querySelector('.controls'); // Added to target the controls
+        document.addEventListener('DOMContentLoaded', function () {
+            const skillYears = document.querySelectorAll('.skill-years');
+            skillYears.forEach(element => {
+                element.title = 'Erfahrung in Jahren';
+            });
+        });
+        // Funktion zum Anzeigen der "Keine Treffer"-Meldung
+        function showNoResultsMessage(searchTerm) {
+            const noResultsMessageId = 'no-search-results-message';
+            const existingMessage = document.getElementById(noResultsMessageId);
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            const noResultsParagraph = document.createElement('p');
+            noResultsParagraph.textContent = `Ihre Suche nach "${searchTerm}" ergab keine Treffer.`;
+            noResultsParagraph.id = noResultsMessageId;
+            noResultsParagraph.style.textAlign = 'center';
+            noResultsParagraph.style.padding = '2rem';
+            noResultsParagraph.style.color = 'var(--secondary)';
+            noResultsParagraph.style.fontSize = '1.2rem';
+            skillListView.appendChild(noResultsParagraph);
+        }
+
+        // Search functionality
+        searchBox.addEventListener('input', function () {
+            const searchTerm = this.value.trim().toLowerCase();
+            let visibleCategoryCount = 0;
+            let visibleSkillCount = 0;
+
+            // Entferne die "Keine Treffer"-Meldung bei jeder Eingabe
+            const noResultsMessageId = 'no-search-results-message';
+            const existingMessage = document.getElementById(noResultsMessageId);
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            skillItems.forEach(item => {
+                const skillName = item.querySelector('.skill-name').textContent.toLowerCase();
+                if (skillName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    visibleSkillCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            categories.forEach(category => {
+                const visibleSkills = Array.from(category.querySelectorAll('.skill-item')).filter(item =>
+                    item.style.display !== 'none');
+                if (visibleSkills.length === 0 && searchTerm !== '') {
+                    category.style.display = 'none';
+                } else {
+                    category.style.display = 'block';
+                    visibleCategoryCount++;
+                }
+            });
+
+            // Zeige "Keine Treffer"-Meldung, wenn keine Fähigkeiten gefunden wurden und die Listenansicht sichtbar ist
+            if (skillListView.style.display === 'block' && searchTerm !== '' && visibleSkillCount === 0) {
+                showNoResultsMessage(searchTerm);
+            }
+        });
+
+        // Filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.getAttribute('data-filter');
+
+                categories.forEach(category => {
+                    if (filter === 'all') {
+                        category.style.display = 'block';
+                    } else if (category.getAttribute('data-category') === filter) {
+                        category.style.display = 'block';
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // View toggle functionality
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Update active button
+                viewButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                const legend = document.querySelector('.legend');
+                const view = this.getAttribute('data-view');
+                const allFilterButton = document.querySelector('.filter-btn[data-filter="all"]'); // Referenz zum "Alle"-Button
+
+                if (view === 'list') {
+                    console.log('Rendering list trigred...');
+                    chartContainer.style.display = 'none';
+                    skillListView.style.display = 'block';
+                    legend.style.display = 'flex';
+                    // Enable category filters
+                    filterButtons.forEach(button => button.disabled = false);
+                    filterButtons.forEach(button => button.style.cursor = 'pointer');
+                    searchBox.style.cursor = 'text';
+                    searchBox.disabled = false;
+                    // Reset search
+                    searchBox.value = '';
+                    skillItems.forEach(item => item.style.display = 'block');
+                    categories.forEach(category => category.style.display = 'block');
+                    
+                    filterButtons.forEach(btn => btn.classList.remove('active')); 
+                    if (allFilterButton) {
+                        allFilterButton.classList.add('active'); 
+                    }
+                    // Trigger input event on search box to potentially show "All" skills
+                    searchBox.dispatchEvent(new Event('input'));
+                } else if (view === 'chart') {
+                    console.log('Rendering chart trigred...');
+                    legend.style.display = 'none';
+                    chartContainer.style.display = 'block';
+                    skillListView.style.display = 'none';
+                    renderChart(); 
+                    // Disable category filters and search
+                    filterButtons.forEach(button => button.disabled = true);
+                    filterButtons.forEach(button => button.classList.remove('active'));
+                    filterButtons.forEach(button => button.classList.remove('filter-btn_hover'));
+                    filterButtons.forEach(button => button.style.cursor = 'not-allowed');
+                    searchBox.style.cursor = 'not-allowed';
+                    searchBox.value = '';
+                    searchBox.disabled = true;
+                    // Reset display
+                    categories.forEach(category => category.style.display = 'block');
+                    skillItems.forEach(item => item.style.display = 'block');
+                    // Remove any existing no results message when switching to chart
+                    const noResultsMessageId = 'no-search-results-message';
+                    const existingMessage = document.getElementById(noResultsMessageId);
+                    if (existingMessage) {
+                        existingMessage.remove();
+                    }
+                }
+            });
+        });
+
+        // Function to prepare data for the chart
+        function getChartData() {
+            const skillData = {};
+            skillItems.forEach(item => {
+                const skillName = item.querySelector('.skill-name').textContent;
+                const progressBar = item.querySelector('.progress-bar');
+                let level;
+
+                if (progressBar.classList.contains('progress-beginner')) {
+                    level = 25;
+                } else if (progressBar.classList.contains('progress-good')) {
+                    level = 75;
+                } else if (progressBar.classList.contains('progress-advanced')) {
+                    level = 90;
+                } else if (progressBar.classList.contains('progress-expert')) {
+                    level = 100;
+                } else {
+                    level = 50; // Default if no class is found
+                }
+                skillData[skillName] = level;
+            });
+            return skillData;
+        }
+
+        // Function to render the chart
+        let skillsChartInstance = null; // To keep track of the chart instance
+
+        function renderChart() {
+            const skillsChartCanvas = document.getElementById('skillsChart').getContext('2d');
+            const chartData = getChartData();
+            const skillNames = Object.keys(chartData);
+            const skillLevels = Object.values(chartData);
+
+            // Destroy existing chart instance if it exists
+            if (skillsChartInstance) {
+                skillsChartInstance.destroy();
+            }
+
+            skillsChartInstance = new Chart(skillsChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: skillNames,
+                    datasets: [{
+                        label: 'Skill Level',
+                        data: skillLevels,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Kompetenzstufe (%)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Skills'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Kompetenzstufendiagramm ',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial state: hide chart
+        chartContainer.style.display = 'none';
+        skillListView.style.display = 'block'; // Ensure list view is visible on load
+        const allFilterButton = document.querySelector('.filter-btn[data-filter="all"]');
+        if (allFilterButton) {
+            allFilterButton.classList.add('active'); // Mark "All" as active on load
+        }
+        searchBox.dispatchEvent(new Event('input')); // Trigger initial search to show all
+    </script>
